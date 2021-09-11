@@ -7,5 +7,6 @@ object Versions {
 }
 
 dependencies {
-  implementation("com.google.guava:guava:${Versions.GUAVA}")
+  api("org.jetbrains:annotations:22.0.0")
+  api("com.google.guava:guava:${Versions.GUAVA}")
 }

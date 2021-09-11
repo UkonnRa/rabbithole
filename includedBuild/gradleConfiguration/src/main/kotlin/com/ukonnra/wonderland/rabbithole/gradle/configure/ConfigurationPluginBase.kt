@@ -5,6 +5,7 @@ import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.benmanes.gradle.versions.VersionsPlugin
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.github.spotbugs.snom.SpotBugsPlugin
+import com.github.spotbugs.snom.SpotBugsTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -17,13 +18,14 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 
 abstract class ConfigurationPluginBase : Plugin<Project> {
   companion object {
-    internal val JAVA_VERSION = JavaVersion.VERSION_16
+    internal val JAVA_VERSION = JavaVersion.VERSION_17
   }
 
   override fun apply(target: Project) {
@@ -48,6 +50,18 @@ abstract class ConfigurationPluginBase : Plugin<Project> {
 
     target.extensions.configure<JacocoPluginExtension> {
       toolVersion = "0.8.7"
+    }
+
+    target.tasks.withType<SpotBugsTask> {
+      omitVisitors.add("FindReturnRef")
+      reports {
+        create("xml") {
+          enabled = false
+        }
+        create("html") {
+          enabled = true
+        }
+      }
     }
 
     target.extensions.configure<SpotlessExtension> {

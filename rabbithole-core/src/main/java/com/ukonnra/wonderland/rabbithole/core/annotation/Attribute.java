@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Attribute {
-  String readPermission() default "";
+  String name() default "";
+
   boolean ignore() default false;
-  boolean filterable() default true;
 }

@@ -1,6 +1,7 @@
 package com.ukonnra.wonderland.rabbithole.gradle.configure
 
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
@@ -16,6 +17,7 @@ import org.gradle.kotlin.dsl.register
 open class LibraryConfigurationPlugin : ServiceConfigurationPluginBase() {
   override fun doApply(target: Project) {
     target.apply<MavenPublishPlugin>()
+    target.apply<JavaLibraryPlugin>()
 
     target.extensions.configure<JavaPluginExtension> {
       withJavadocJar()

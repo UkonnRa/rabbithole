@@ -1,5 +1,6 @@
 package com.ukonnra.wonderland.rabbithole.core.annotation;
 
+import com.ukonnra.wonderland.rabbithole.core.facade.CommandFacade;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,6 +12,8 @@ import java.lang.annotation.Target;
 public @interface AggregateRoot {
   /** @return AggregateRoot type */
   String type();
+
+  Class<? extends CommandFacade> command();
 
   /** @return AggregateRoot id field name, the default is "id" */
   String idField() default "id";

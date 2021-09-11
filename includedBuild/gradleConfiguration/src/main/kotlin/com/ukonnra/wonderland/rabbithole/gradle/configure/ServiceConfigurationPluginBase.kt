@@ -15,6 +15,8 @@ abstract class ServiceConfigurationPluginBase : ConfigurationPluginBase() {
   override fun apply(target: Project) {
     super.apply(target)
 
+    doApply(target)
+
     target.dependencies {
       "implementation"(platform("org.junit:junit-bom:$JUNIT5_VERSION"))
       "implementation"(platform("org.apache.logging.log4j:log4j-bom:$LOG4J2_VERSION"))
@@ -26,7 +28,5 @@ abstract class ServiceConfigurationPluginBase : ConfigurationPluginBase() {
 
       "testImplementation"("org.junit.jupiter:junit-jupiter")
     }
-
-    doApply(target)
   }
 }

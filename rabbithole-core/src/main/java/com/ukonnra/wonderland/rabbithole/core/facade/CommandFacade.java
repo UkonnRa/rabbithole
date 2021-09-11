@@ -1,4 +1,3 @@
 package com.ukonnra.wonderland.rabbithole.core.facade;
 
-public interface RelationshipFacade {
-}
+public interface CommandFacade {}
