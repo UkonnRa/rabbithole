@@ -7,4 +7,6 @@ module rabbithole.core {
   exports com.ukonnra.wonderland.rabbithole.core;
   exports com.ukonnra.wonderland.rabbithole.core.annotation;
   exports com.ukonnra.wonderland.rabbithole.core.facade;
+  exports com.ukonnra.wonderland.rabbithole.core.filter;
+  exports com.ukonnra.wonderland.rabbithole.core.hook;
 }
