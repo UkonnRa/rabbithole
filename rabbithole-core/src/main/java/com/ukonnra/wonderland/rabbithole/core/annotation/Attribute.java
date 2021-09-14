@@ -11,4 +11,8 @@ public @interface Attribute {
   String name() default "";
 
   boolean ignore() default false;
+
+  boolean nullable() default false;
+
+  boolean filterable() default true;
 }

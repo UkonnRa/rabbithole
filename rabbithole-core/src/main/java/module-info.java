@@ -1,12 +1,10 @@
 /** */
 module rabbithole.core {
-  requires com.google.common;
   requires org.apache.logging.log4j;
-  requires org.jetbrains.annotations;
+  requires com.github.spotbugs.annotations;
 
   exports com.ukonnra.wonderland.rabbithole.core;
   exports com.ukonnra.wonderland.rabbithole.core.annotation;
   exports com.ukonnra.wonderland.rabbithole.core.facade;
-  exports com.ukonnra.wonderland.rabbithole.core.filter;
-  exports com.ukonnra.wonderland.rabbithole.core.hook;
+  exports com.ukonnra.wonderland.rabbithole.core.schema;
 }

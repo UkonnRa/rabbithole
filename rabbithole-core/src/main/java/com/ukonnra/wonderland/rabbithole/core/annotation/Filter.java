@@ -1,7 +1,6 @@
 package com.ukonnra.wonderland.rabbithole.core.annotation;
 
 import com.ukonnra.wonderland.rabbithole.core.facade.FilterFacade;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public record ValueObjectSchema(String type, Data data) {
-  sealed interface Data {
+  public sealed interface Data {
     record Enum(List<String> values) implements Data {}
 
     record Obj(Map<String, FieldSchema<AttributeSchemaType>> attributes) implements Data {}

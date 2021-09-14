@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.dependencies
 
 abstract class ServiceConfigurationPluginBase : ConfigurationPluginBase() {
   companion object {
-    private const val JUNIT5_VERSION = "5.8.0-RC1"
+    private const val JUNIT5_VERSION = "5.8.0"
     private const val LOG4J2_VERSION = "2.14.1"
     private const val JACKSON_VERSION = "2.13.0-rc2"
   }

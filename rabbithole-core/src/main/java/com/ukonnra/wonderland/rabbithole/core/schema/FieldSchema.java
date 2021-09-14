@@ -1,3 +1,3 @@
 package com.ukonnra.wonderland.rabbithole.core.schema;
 
-public record FieldSchema<T>(boolean isNullable, T type) {}
+public record FieldSchema<T>(String name, boolean isNullable, T type) {}

@@ -1,11 +1,14 @@
 package com.ukonnra.wonderland.rabbithole.gradle.configure
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.testing.jacoco.tasks.JacocoReport
+import org.gradle.testing.jacoco.tasks.JacocoReportsContainer
 
 class ProjectConfigurationPlugin : ConfigurationPluginBase() {
   override fun apply(target: Project) {
@@ -21,7 +24,7 @@ class ProjectConfigurationPlugin : ConfigurationPluginBase() {
         sourceSets((it.extensions.getByName("sourceSets") as SourceSetContainer)["main"])
       }
 
-      reports {
+      reportsKt {
         xml.required.set(true)
         xml.outputLocation.set(target.file("${target.buildDir}/reports/jacoco/report.xml"))
         html.required.set(true)
@@ -29,8 +32,11 @@ class ProjectConfigurationPlugin : ConfigurationPluginBase() {
       }
     }
 
-    target.tasks.named("check") {
+    target.tasks.named<Task>("check") {
       dependsOn(codeCoverageReport)
     }
   }
 }
+
+private fun JacocoReport.reportsKt(configuration: JacocoReportsContainer.() -> Unit): JacocoReportsContainer =
+  this.reports(configuration)

@@ -4,7 +4,7 @@ import com.ukonnra.wonderland.rabbithole.core.annotation.Command;
 import com.ukonnra.wonderland.rabbithole.core.facade.CommandFacade;
 import com.ukonnra.wonderland.rabbithole.jsonapi.annotation.JsonapiCommand;
 import com.ukonnra.wonderland.rabbithole.jsonapi.schema.JsonapiOperationType;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public sealed interface ArticleCommand extends CommandFacade
     permits ArticleCommand.Create,

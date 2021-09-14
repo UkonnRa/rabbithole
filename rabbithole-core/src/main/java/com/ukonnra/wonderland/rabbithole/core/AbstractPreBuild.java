@@ -1,42 +1,27 @@
 package com.ukonnra.wonderland.rabbithole.core;
 
-import com.google.common.reflect.ClassPath;
 import com.ukonnra.wonderland.rabbithole.core.annotation.AggregateRoot;
-import com.ukonnra.wonderland.rabbithole.core.annotation.Command;
+import com.ukonnra.wonderland.rabbithole.core.facade.AggregateRootFacade;
 import java.io.IOException;
-import java.util.stream.Collectors;
+import java.util.List;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractPreBuild<T extends AbstractPreBuild> {
-  private final @NotNull Class<T> clazz;
+public abstract class AbstractPreBuild {
+  private final List<Class<? extends AggregateRootFacade>> aggregateRoots;
+  private final PluginBundle pluginBundle;
 
-  protected AbstractPreBuild(final @NotNull Class<T> clazz) {
-    this.clazz = clazz;
+  protected AbstractPreBuild(
+      List<Class<? extends AggregateRootFacade>> aggregateRoots, PluginBundle pluginBundle) {
+    this.aggregateRoots = aggregateRoots;
+    this.pluginBundle = pluginBundle;
   }
 
-  public abstract @NotNull Logger logger();
+  public abstract Logger logger();
 
   public void handle() throws IOException {
-    var classes =
-        ClassPath.from(ClassLoader.getSystemClassLoader()).getAllClasses().stream()
-            .filter(c -> c.getPackageName().startsWith(clazz.getPackageName()))
-            .map(clazz -> clazz.load())
-            .filter(clz -> clz.isAnnotationPresent(AggregateRoot.class))
-            .collect(Collectors.toSet());
-
-    for (var clz : classes) {
-      var anno = clz.getAnnotation(AggregateRoot.class);
-      var command = anno.command();
-      logger()
-          .info("Command Class: {} - isSealed: {}", command.getSimpleName(), command.isSealed());
-      for (var subCommand : command.getPermittedSubclasses()) {
-        logger().info("  SubCommand: {}", subCommand.getSimpleName());
-        var commandAnno = subCommand.getAnnotation(Command.class);
-        logger()
-            .info(
-                "  - @Command: name - {}, idField - {}", commandAnno.name(), commandAnno.idField());
-      }
-    }
+    aggregateRoots.stream()
+        .filter(c -> c.isAnnotationPresent(AggregateRoot.class))
+        .map(this.pluginBundle::parseAggregate)
+        .toList();
   }
 }

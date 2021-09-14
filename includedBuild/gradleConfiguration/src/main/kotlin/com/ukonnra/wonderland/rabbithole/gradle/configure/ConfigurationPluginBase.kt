@@ -1,12 +1,15 @@
 package com.ukonnra.wonderland.rabbithole.gradle.configure
 
+import com.diffplug.gradle.spotless.JavaExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.benmanes.gradle.versions.VersionsPlugin
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.github.spotbugs.snom.SpotBugsPlugin
+import com.github.spotbugs.snom.SpotBugsReport
 import com.github.spotbugs.snom.SpotBugsTask
 import org.gradle.api.JavaVersion
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
@@ -53,8 +56,9 @@ abstract class ConfigurationPluginBase : Plugin<Project> {
     }
 
     target.tasks.withType<SpotBugsTask> {
+      // Ignore error: May expose internal representation by returning reference to mutable object
       omitVisitors.add("FindReturnRef")
-      reports {
+      reportsKt {
         create("xml") {
           enabled = false
         }
@@ -65,7 +69,7 @@ abstract class ConfigurationPluginBase : Plugin<Project> {
     }
 
     target.extensions.configure<SpotlessExtension> {
-      java {
+      javaKt {
         importOrder()
         removeUnusedImports()
         googleJavaFormat()
@@ -90,3 +94,11 @@ abstract class ConfigurationPluginBase : Plugin<Project> {
     }
   }
 }
+
+private typealias Container = NamedDomainObjectContainer<out SpotBugsReport>
+
+private fun SpotBugsTask.reportsKt(configuration: Container.() -> Unit): Container =
+  this.reports(configuration)
+
+private fun SpotlessExtension.javaKt(configuration: JavaExtension.() -> Unit): Unit =
+  this.java(configuration)

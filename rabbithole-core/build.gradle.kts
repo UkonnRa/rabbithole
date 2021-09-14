@@ -4,9 +4,9 @@ plugins {
 
 object Versions {
   const val GUAVA = "30.1.1-jre"
+  const val SPOTBUGS = "4.4.1"
 }
 
 dependencies {
-  api("org.jetbrains:annotations:22.0.0")
-  api("com.google.guava:guava:${Versions.GUAVA}")
+  api("com.github.spotbugs:spotbugs-annotations:${Versions.SPOTBUGS}")
 }

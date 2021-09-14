@@ -6,9 +6,10 @@ import com.ukonnra.wonderland.rabbithole.core.annotation.Relationship;
 import com.ukonnra.wonderland.rabbithole.core.facade.AggregateRootFacade;
 import com.ukonnra.wonderland.rabbithole.example.core.domains.article.Article;
 import com.ukonnra.wonderland.rabbithole.example.core.domains.user.valobjs.Password;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.time.Instant;
 import java.util.List;
-import org.jetbrains.annotations.Nullable;
+import java.util.UUID;
 
 @AggregateRoot(type = "users", command = UserCommand.class)
 public record User(
@@ -20,5 +21,16 @@ public record User(
         List<Article> articles,
     @Nullable @Relationship(type = User.class, mappingType = Relationship.MappingType.TO_ONE)
         User manager,
-    @Attribute(ignore = true) String ignored)
-    implements AggregateRootFacade {}
+    @Attribute(ignore = true) boolean ignored)
+    implements AggregateRootFacade {
+  public User(String name, String password) {
+    this(
+        UUID.randomUUID().toString(),
+        name,
+        Instant.now(),
+        new Password.Normal(password),
+        List.of(),
+        null,
+        false);
+  }
+}

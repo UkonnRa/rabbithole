@@ -14,7 +14,7 @@ repositories {
 dependencies {
   implementation("com.github.ben-manes:gradle-versions-plugin:0.39.0")
   implementation("com.diffplug.spotless:spotless-plugin-gradle:5.15.0")
-  implementation("gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.4")
+  implementation("gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.5")
 }
 
 gradlePlugin {

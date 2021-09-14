@@ -15,6 +15,8 @@ public @interface Relationship {
 
   String name() default "";
 
+  boolean nullable() default false;
+
   enum MappingType {
     TO_ONE,
     TO_MANY;
