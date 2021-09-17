@@ -17,13 +17,14 @@ private object Versions {
 
 dependencies {
   api(project(":rabbithole-core"))
+  annotationProcessor(project(":rabbithole-core"))
   api(project(":rabbithole-jsonapi"))
   api(project(":rabbithole-grpc"))
 
   implementation("javax.annotation:javax.annotation-api:${Versions.JAVAX_ANNOTATION}")
   implementation("com.google.protobuf:protobuf-java-util:${Versions.PROTOC}")
   implementation("io.grpc:grpc-netty-shaded:${Versions.GRPC}")
-  implementation("io.grpc:grpc-protobuf:${Versions.GRPC}")
+  implementation("io.grpc:grpc-protobuf-lite:${Versions.GRPC}")
   implementation("io.grpc:grpc-stub:${Versions.GRPC}")
 }
 

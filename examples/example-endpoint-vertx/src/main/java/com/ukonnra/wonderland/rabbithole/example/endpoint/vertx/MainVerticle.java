@@ -2,21 +2,21 @@ package com.ukonnra.wonderland.rabbithole.example.endpoint.vertx;
 
 import com.ukonnra.wonderland.rabbithole.example.core.domains.user.User;
 import io.vertx.core.AbstractVerticle;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MainVerticle extends AbstractVerticle {
   private static final Logger LOGGER = LogManager.getLogger(MainVerticle.class);
 
   private void exec(String command) throws IOException {
-    Process p = Runtime.getRuntime().exec(command);
-    BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-    String s;
-    while ((s = stdInput.readLine()) != null) {
+    var p = Runtime.getRuntime().exec(command);
+    try (var stdInput =
+        new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
+      String s = stdInput.lines().reduce("", (a, b) -> a + "\n" + b);
       LOGGER.info(s);
     }
   }

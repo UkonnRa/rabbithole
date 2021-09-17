@@ -17,9 +17,16 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
@@ -218,55 +225,97 @@ public record PluginBundle(List<Plugin> plugins) implements Plugin {
               }
 
               LOGGER.info("  == Attribute: {} ==", field.getName());
-              var genericType = field.getGenericType();
-              LOGGER.info("     type: {}", field.getGenericType());
-              if (genericType instanceof ParameterizedType) {
-                LOGGER.info(
-                    "      generic types: {}",
-                    Arrays.stream(((ParameterizedType) genericType).getActualTypeArguments())
-                        .toList());
+              var genericType = field.getType();
+              LOGGER.info("     type: {}", genericType);
+              var genericTypeParams = genericType.getTypeParameters();
+              if (genericTypeParams.length > 0) {
+                LOGGER.info("      generic types: {}", Arrays.stream(genericTypeParams).toList());
               }
               LOGGER.info("     name: {}", name);
 
-              AttributeSchemaType type = parseAttributeSchemaTypePrimary(field);
-              if (type == null) {
-                type = parseAttributeSchemaTypeArray(field);
+              return new FieldSchema<>(
+                  name, isNullable(field), parseAttributeSchemaType(genericType));
+            });
+  }
+
+  private static final Map<AttributeSchemaType.Primary.Type, List<Class<?>>> PRIMITIVE_MAPPER =
+      Map.of(
+          AttributeSchemaType.Primary.Type.STRING, List.of(String.class, UUID.class),
+          AttributeSchemaType.Primary.Type.INTEGER, List.of(Integer.class, int.class),
+          AttributeSchemaType.Primary.Type.FLOAT,
+              List.of(Float.class, Double.class, float.class, double.class),
+          AttributeSchemaType.Primary.Type.BOOLEAN, List.of(Boolean.class, boolean.class),
+          AttributeSchemaType.Primary.Type.TIMESTAMP,
+              List.of(
+                  Date.class,
+                  LocalDateTime.class,
+                  Instant.class,
+                  OffsetDateTime.class,
+                  ZonedDateTime.class));
+
+  @NonNull
+  private AttributeSchemaType parseAttributeSchemaType(final Class<?> genericType) {
+    AttributeSchemaType type = parseAttributeSchemaTypePrimary(genericType);
+
+    if (type == null) {
+      type = parseAttributeSchemaTypeMap(genericType);
+    }
+
+    if (type == null) {
+      type = parseAttributeSchemaTypeArray(genericType);
+    }
+
+    if (type == null) {
+      type = parseAttributeSchemaTypeRef(genericType);
+    }
+
+    return type;
+  }
+
+  @Override
+  @Nullable
+  public AttributeSchemaType.Primary parseAttributeSchemaTypePrimary(Class<?> type) {
+    return doParse(p -> p.parseAttributeSchemaTypePrimary(type))
+        .orElseGet(
+            () -> {
+              for (var entry : PRIMITIVE_MAPPER.entrySet()) {
+                if (entry.getValue().stream().anyMatch(c -> c.isAssignableFrom(type))) {
+                  return new AttributeSchemaType.Primary(entry.getKey());
+                }
               }
 
-              if (type == null) {
-                type = parseAttributeSchemaTypeMap(field);
-              }
-
-              if (type == null) {
-                type = parseAttributeSchemaTypeRef(field);
-              }
-
-              return new FieldSchema<>(name, isNullable(field), type);
+              return null;
             });
   }
 
   @Override
-  @Nullable
-  public AttributeSchemaType.Primary parseAttributeSchemaTypePrimary(Field field) {
-    return null;
+  @NonNull
+  public AttributeSchemaType.Ref parseAttributeSchemaTypeRef(Class<?> type) {
+    return doParse(p -> p.parseAttributeSchemaTypeRef(type))
+        .orElseGet(() -> new AttributeSchemaType.Ref(getTypeAsString(type)));
   }
 
   @Override
   @Nullable
-  public AttributeSchemaType.Ref parseAttributeSchemaTypeRef(Field field) {
-    return null;
+  public AttributeSchemaType.Array parseAttributeSchemaTypeArray(Class<?> type) {
+    return doParse(p -> p.parseAttributeSchemaTypeArray(type)).orElseGet(() -> null);
   }
 
   @Override
   @Nullable
-  public AttributeSchemaType.Array parseAttributeSchemaTypeArray(Field field) {
-    return null;
-  }
+  public AttributeSchemaType.Map parseAttributeSchemaTypeMap(Class<?> type) {
+    return doParse(p -> p.parseAttributeSchemaTypeMap(type))
+        .orElseGet(
+            () -> {
+              //      var typeParams = type.getTypeParameters();
+              //      if (Map.class.isAssignableFrom(type) && typeParams.length == 2) {
+              //        var schemaType =
+              // parseAttributeSchemaType(typeParams[1].getGenericDeclaration());
+              //        return new AttributeSchemaType.Map(schemaType);
+              //      }
 
-  @Override
-  @Nullable
-  public AttributeSchemaType.Map parseAttributeSchemaTypeMap(Field field) {
-    return null;
+              return null;
+            });
   }
 
   @Override

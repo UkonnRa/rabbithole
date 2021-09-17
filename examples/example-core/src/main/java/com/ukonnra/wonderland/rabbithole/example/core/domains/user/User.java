@@ -16,6 +16,7 @@ public record User(
     String id,
     String name,
     Instant createAt,
+    int[] numbers,
     @Attribute(name = "password") Password passwordComponent,
     @Relationship(type = Article.class, mappingType = Relationship.MappingType.TO_MANY)
         List<Article> articles,
@@ -28,6 +29,7 @@ public record User(
         UUID.randomUUID().toString(),
         name,
         Instant.now(),
+        new int[] {},
         new Password.Normal(password),
         List.of(),
         null,

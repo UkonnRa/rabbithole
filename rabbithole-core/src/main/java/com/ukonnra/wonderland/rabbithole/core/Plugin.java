@@ -65,22 +65,22 @@ public interface Plugin {
   }
 
   @Nullable
-  default AttributeSchemaType.Primary parseAttributeSchemaTypePrimary(Field field) {
+  default AttributeSchemaType.Primary parseAttributeSchemaTypePrimary(Class<?> type) {
     return null;
   }
 
   @Nullable
-  default AttributeSchemaType.Ref parseAttributeSchemaTypeRef(Field field) {
+  default AttributeSchemaType.Ref parseAttributeSchemaTypeRef(Class<?> type) {
     return null;
   }
 
   @Nullable
-  default AttributeSchemaType.Array parseAttributeSchemaTypeArray(Field field) {
+  default AttributeSchemaType.Array parseAttributeSchemaTypeArray(Class<?> type) {
     return null;
   }
 
   @Nullable
-  default AttributeSchemaType.Map parseAttributeSchemaTypeMap(Field field) {
+  default AttributeSchemaType.Map parseAttributeSchemaTypeMap(Class<?> type) {
     return null;
   }
 

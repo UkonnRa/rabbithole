@@ -1,7 +1,6 @@
 /** */
 module rabbithole.example.core {
   requires org.apache.logging.log4j;
-  requires com.google.common;
   requires com.github.spotbugs.annotations;
   requires rabbithole.core;
   requires rabbithole.jsonapi;
