@@ -1,34 +1,22 @@
 package com.ukonnra.wonderland.rabbithole.example.endpoint.vertx;
 
-import com.ukonnra.wonderland.rabbithole.example.core.domains.user.User;
 import io.vertx.core.AbstractVerticle;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class MainVerticle extends AbstractVerticle {
   private static final Logger LOGGER = LogManager.getLogger(MainVerticle.class);
 
-  private void exec(String command) throws IOException {
-    var p = Runtime.getRuntime().exec(command);
-    try (var stdInput =
-        new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-      String s = stdInput.lines().reduce("", (a, b) -> a + "\n" + b);
-      LOGGER.info(s);
-    }
-  }
-
   @Override
   public void start() throws IOException {
     LOGGER.info("Start example vertx");
-    var user = new User("name", "password");
-    LOGGER.info("Start user: {}", user);
 
-    exec("id");
-    exec("whoami");
-    exec("ls -lan");
+    try (var ins = Objects.requireNonNull(this.getClass().getResourceAsStream("/log4j2.xml"))) {
+      var log4j2 = new String(ins.readAllBytes(), StandardCharsets.UTF_8);
+      LOGGER.info("log4j2 file: {}", log4j2);
+    }
   }
 }

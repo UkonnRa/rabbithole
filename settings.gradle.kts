@@ -2,7 +2,6 @@ rootProject.name = "rabbithole"
 
 include(
     ":rabbithole-core",
-    ":rabbithole-grpc",
     ":rabbithole-jsonapi",
     ":rabbithole-graphql",
 )

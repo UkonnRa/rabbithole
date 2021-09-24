@@ -4,6 +4,7 @@ import com.ukonnra.wonderland.rabbithole.core.annotation.AggregateRoot;
 import com.ukonnra.wonderland.rabbithole.core.annotation.Attribute;
 import com.ukonnra.wonderland.rabbithole.core.annotation.Relationship;
 import com.ukonnra.wonderland.rabbithole.core.facade.AggregateRootFacade;
+import com.ukonnra.wonderland.rabbithole.core.schema.AttributeSchemaType;
 import com.ukonnra.wonderland.rabbithole.example.core.domains.article.Article;
 import com.ukonnra.wonderland.rabbithole.example.core.domains.user.valobjs.Password;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -20,10 +21,17 @@ public record User(
     @Attribute(name = "password") Password passwordComponent,
     @Relationship(type = Article.class, mappingType = Relationship.MappingType.TO_MANY)
         List<Article> articles,
-    @Nullable @Relationship(type = User.class, mappingType = Relationship.MappingType.TO_ONE)
+    @Nullable
+        @Relationship(
+            nullable = true,
+            type = User.class,
+            mappingType = Relationship.MappingType.TO_ONE)
         User manager,
     @Attribute(ignore = true) boolean ignored)
     implements AggregateRootFacade {
+  public static AttributeSchemaType SCHEMA =
+      new AttributeSchemaType.Primary(AttributeSchemaType.Primary.Type.STRING);
+
   public User(String name, String password) {
     this(
         UUID.randomUUID().toString(),

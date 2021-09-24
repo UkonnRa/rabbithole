@@ -13,6 +13,4 @@ public @interface Attribute {
   boolean ignore() default false;
 
   boolean nullable() default false;
-
-  boolean filterable() default true;
 }

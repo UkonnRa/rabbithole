@@ -2,6 +2,7 @@ package com.ukonnra.wonderland.rabbithole.core;
 
 import com.google.auto.service.AutoService;
 import com.ukonnra.wonderland.rabbithole.core.annotation.RabbitHoleApplication;
+import java.io.IOException;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -10,7 +11,11 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.DeclaredType;
 import javax.tools.Diagnostic;
+import javax.tools.StandardLocation;
 
 @AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
@@ -48,10 +53,46 @@ public class AnnotationProcessor extends AbstractProcessor {
                   .printMessage(
                       Diagnostic.Kind.NOTE,
                       "  Class: " + type.getKind() + ", " + type.getQualifiedName());
+
+              for (var field : processingEnv.getElementUtils().getAllMembers(type)) {
+                if (field.getKind().isField()) {
+                  if (field instanceof VariableElement variable) {
+                    processingEnv
+                        .getMessager()
+                        .printMessage(
+                            Diagnostic.Kind.NOTE,
+                            "      VariableElement - Type: " + variable.asType());
+                    var varType = variable.asType();
+
+                    if (varType instanceof DeclaredType decl) {
+                      processingEnv
+                          .getMessager()
+                          .printMessage(
+                              Diagnostic.Kind.NOTE,
+                              "        DeclaredType - Generics: " + decl.getTypeArguments());
+                    } else if (varType instanceof ArrayType arrType) {
+                      processingEnv
+                          .getMessager()
+                          .printMessage(
+                              Diagnostic.Kind.NOTE,
+                              "        ArrayType - Type: " + arrType.getComponentType());
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
+    }
+
+    try (var writer =
+        processingEnv
+            .getFiler()
+            .createResource(StandardLocation.CLASS_OUTPUT, "", "resources/hello.info")
+            .openWriter()) {
+      writer.write("World");
+    } catch (IOException ignored) {
     }
 
     return true;

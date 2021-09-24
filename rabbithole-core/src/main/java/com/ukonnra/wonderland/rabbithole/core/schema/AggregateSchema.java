@@ -8,5 +8,4 @@ public record AggregateSchema(
     String name,
     Map<String, FieldSchema<AttributeSchemaType>> attributes,
     Map<String, FieldSchema<RelationshipSchemaType>> relationships,
-    Map<String, FilterSchema> filters,
     List<CommandSchema> commands) {}

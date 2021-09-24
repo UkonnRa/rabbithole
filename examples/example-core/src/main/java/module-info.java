@@ -5,7 +5,6 @@ module rabbithole.example.core {
   requires rabbithole.core;
   requires rabbithole.jsonapi;
 
-  exports com.ukonnra.wonderland.rabbithole.example.core;
   exports com.ukonnra.wonderland.rabbithole.example.core.domains.article;
   exports com.ukonnra.wonderland.rabbithole.example.core.domains.user;
   exports com.ukonnra.wonderland.rabbithole.example.core.domains.user.valobjs;
