@@ -11,4 +11,6 @@ dependencies {
   api("com.github.spotbugs:spotbugs-annotations:${Versions.SPOTBUGS}")
   api("com.google.auto.service:auto-service:${Versions.AUTO_SERVICE}")
   annotationProcessor("com.google.auto.service:auto-service:${Versions.AUTO_SERVICE}")
+
+  testImplementation("com.google.testing.compile:compile-testing:0.19")
 }

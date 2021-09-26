@@ -25,6 +25,7 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPlugin
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.javamodularity.moduleplugin.ModuleSystemPlugin
 
 abstract class ConfigurationPluginBase : Plugin<Project> {
   companion object {
@@ -39,6 +40,7 @@ abstract class ConfigurationPluginBase : Plugin<Project> {
     target.apply<SpotlessPlugin>()
     target.apply<CheckstylePlugin>()
     target.apply<SpotBugsPlugin>()
+    target.apply<ModuleSystemPlugin>()
 
     target.group = "com.ukonnra.wonderland"
 
