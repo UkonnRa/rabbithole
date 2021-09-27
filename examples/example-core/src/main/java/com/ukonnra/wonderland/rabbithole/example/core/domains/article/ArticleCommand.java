@@ -2,6 +2,7 @@ package com.ukonnra.wonderland.rabbithole.example.core.domains.article;
 
 import com.ukonnra.wonderland.rabbithole.core.annotation.Command;
 import com.ukonnra.wonderland.rabbithole.core.facade.CommandFacade;
+import com.ukonnra.wonderland.rabbithole.example.core.domains.article.valobjs.ArticleState;
 import com.ukonnra.wonderland.rabbithole.jsonapi.annotation.JsonapiCommand;
 import com.ukonnra.wonderland.rabbithole.jsonapi.schema.JsonapiOperationType;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -17,7 +18,7 @@ public sealed interface ArticleCommand extends CommandFacade
 
   @Command(name = "updateArticleInfo", idField = "id")
   @JsonapiCommand(type = JsonapiOperationType.UPDATE)
-  record Update(String id, @Nullable Integer count, @Nullable Article.State state)
+  record Update(String id, @Nullable Integer count, @Nullable ArticleState state)
       implements ArticleCommand {}
 
   @Command(name = "updateAuthor", idField = "id")

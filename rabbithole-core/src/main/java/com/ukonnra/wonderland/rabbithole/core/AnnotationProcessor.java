@@ -4,7 +4,9 @@ import com.google.auto.service.AutoService;
 import com.ukonnra.wonderland.rabbithole.core.annotation.AggregateRoot;
 import com.ukonnra.wonderland.rabbithole.core.annotation.RabbitHoleApplication;
 import com.ukonnra.wonderland.rabbithole.core.annotation.Relationship;
+import com.ukonnra.wonderland.rabbithole.core.annotation.ValueObject;
 import com.ukonnra.wonderland.rabbithole.core.schema.FieldSchema;
+import com.ukonnra.wonderland.rabbithole.core.schema.ValueObjectSchema;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -33,6 +35,9 @@ import javax.tools.StandardLocation;
 public class AnnotationProcessor extends AbstractProcessor {
   @SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
   private FieldSchema.Factory fieldFactory;
+
+  @SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
+  private ValueObjectSchema.Factory valObjFactory;
 
   protected void info(final String message) {
     processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
@@ -78,6 +83,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 annoApp.defaultAsNonNull(),
                 getTypesInAnnotation(annoApp, RabbitHoleApplication::nullMarkers));
         this.fieldFactory = new FieldSchema.Factory(processingEnv, context);
+        this.valObjFactory = new ValueObjectSchema.Factory(this.fieldFactory);
 
         for (var moduleEnclosedElem :
             processingEnv
@@ -88,30 +94,33 @@ public class AnnotationProcessor extends AbstractProcessor {
             info("Package: " + packageElem.getQualifiedName());
 
             for (var inner : packageElem.getEnclosedElements()) {
+              info("  Class: " + inner.getKind() + ", " + inner);
               if (inner instanceof TypeElement type) {
-                info("  Class: " + type.getKind() + ", " + type.getQualifiedName());
                 var annoAggr = type.getAnnotation(AggregateRoot.class);
+                if (annoAggr != null) {
+                  for (var field : processingEnv.getElementUtils().getAllMembers(type)) {
+                    if (field.getKind().isField()) {
+                      if (field instanceof VariableElement variable) {
+                        var annoRelat = variable.getAnnotation(Relationship.class);
 
-                if (annoAggr == null) {
-                  continue;
-                }
-
-                for (var field : processingEnv.getElementUtils().getAllMembers(type)) {
-                  if (field.getKind().isField()) {
-                    if (field instanceof VariableElement variable) {
-                      var annoRelat = variable.getAnnotation(Relationship.class);
-
-                      if (annoRelat == null) {
-                        if (!annoAggr.idField().contentEquals(variable.getSimpleName())) {
-                          var attributeType = this.fieldFactory.createAttribute(variable);
-                          info("AttributeType: " + attributeType);
+                        if (annoRelat == null) {
+                          if (!annoAggr.idField().contentEquals(variable.getSimpleName())) {
+                            var attributeType = this.fieldFactory.createAttribute(variable);
+                            info("AttributeType: " + attributeType);
+                          }
+                        } else {
+                          var relatType = this.fieldFactory.createRelationship(variable);
+                          info("RelationshipType: " + relatType);
                         }
-                      } else {
-                        var relatType = this.fieldFactory.createRelationship(variable);
-                        info("RelationshipType: " + relatType);
                       }
                     }
                   }
+                }
+
+                var annoValObj = type.getAnnotation(ValueObject.class);
+                if (annoValObj != null) {
+                  var valObj = this.valObjFactory.create(type);
+                  info("ValObjSchema: " + valObj);
                 }
               }
             }

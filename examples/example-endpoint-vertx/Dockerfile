@@ -33,4 +33,4 @@ COPY --from=build --chown=$USER:$GROUP /app/jre jre
 
 COPY --from=build --chown=$USER:$GROUP /app/app.jar app.jar
 
-ENTRYPOINT jre/bin/java -jar app.jar
+ENTRYPOINT /$HOME/jre/bin/java -jar /$HOME/app.jar

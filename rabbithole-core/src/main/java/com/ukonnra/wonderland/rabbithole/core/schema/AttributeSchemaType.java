@@ -1,12 +1,11 @@
 package com.ukonnra.wonderland.rabbithole.core.schema;
 
-import com.ukonnra.wonderland.rabbithole.core.annotation.ValueObject;
+import com.ukonnra.wonderland.rabbithole.core.Utils;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
@@ -58,29 +57,7 @@ public sealed interface AttributeSchemaType
     }
   }
 
-  record Ref(String type) implements AttributeSchemaType {
-    public static Ref of(final DeclaredType type) {
-      var elem = type.asElement();
-      var annoValObj = elem.getAnnotation(ValueObject.class);
-      if (annoValObj == null) {
-        throw new RuntimeException(
-            String.format("Type[%s] must be annotated with @ValueObject.", elem));
-      }
-
-      if (elem instanceof TypeElement typeElem) {
-        var name = typeElem.getSimpleName().toString();
-        if (!annoValObj.rename().equals("")) {
-          name = annoValObj.rename();
-        }
-        return new Ref(name);
-      } else {
-        throw new RuntimeException(
-            String.format(
-                "Invalid type. Type[%s] is not a class or interface and cannot be a attribute.",
-                elem));
-      }
-    }
-  }
+  record Ref(String type) implements AttributeSchemaType {}
 
   record Array(AttributeSchemaType item) implements AttributeSchemaType {}
 
@@ -128,7 +105,7 @@ public sealed interface AttributeSchemaType
             .map(AttributeSchemaType.class::cast)
             .or(() -> this.createArray(decl))
             .or(() -> this.createMap(decl))
-            .or(() -> Optional.of(Ref.of(decl)));
+            .or(() -> Optional.of(new Ref(Utils.valObjGetName(decl))));
       }
       return Optional.empty();
     }
