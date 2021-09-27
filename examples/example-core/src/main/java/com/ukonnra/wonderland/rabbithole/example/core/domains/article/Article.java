@@ -2,6 +2,7 @@ package com.ukonnra.wonderland.rabbithole.example.core.domains.article;
 
 import com.ukonnra.wonderland.rabbithole.core.annotation.AggregateRoot;
 import com.ukonnra.wonderland.rabbithole.core.annotation.Relationship;
+import com.ukonnra.wonderland.rabbithole.core.annotation.ValueObject;
 import com.ukonnra.wonderland.rabbithole.core.facade.AggregateRootFacade;
 import com.ukonnra.wonderland.rabbithole.example.core.domains.user.User;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -15,9 +16,9 @@ public record Article(
     State state,
     List<String> tags,
     Map<String, Integer> ranks,
-    @Nullable @Relationship(type = User.class, mappingType = Relationship.MappingType.TO_ONE)
-        User author)
+    @Nullable @Relationship User author)
     implements AggregateRootFacade {
+  @ValueObject(rename = "ArticleState")
   enum State {
     IN,
     OUT;

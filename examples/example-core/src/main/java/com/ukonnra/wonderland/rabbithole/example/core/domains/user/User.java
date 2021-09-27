@@ -14,18 +14,12 @@ import java.util.UUID;
 @AggregateRoot(type = "users", command = UserCommand.class)
 public record User(
     String id,
-    String name,
+    @Nullable String name,
     Instant createAt,
     int[] numbers,
     @Attribute(name = "password") Password passwordComponent,
-    @Relationship(type = Article.class, mappingType = Relationship.MappingType.TO_MANY)
-        List<Article> articles,
-    @Nullable
-        @Relationship(
-            nullable = true,
-            type = User.class,
-            mappingType = Relationship.MappingType.TO_ONE)
-        User manager,
+    @Relationship List<Article> articles,
+    @Nullable @Relationship User manager,
     @Attribute(ignore = true) boolean ignored)
     implements AggregateRootFacade {
   public User(String name, String password) {

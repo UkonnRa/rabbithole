@@ -15,6 +15,8 @@ public @interface AggregateRoot {
 
   Class<? extends CommandFacade> command();
 
+  String rename() default "";
+
   /** @return AggregateRoot id field name, the default is "id" */
   String idField() default "id";
 }
