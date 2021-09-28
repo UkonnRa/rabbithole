@@ -1,5 +1,6 @@
 package com.ukonnra.wonderland.rabbithole.core.schema;
 
+import com.ukonnra.wonderland.rabbithole.core.Utils;
 import com.ukonnra.wonderland.rabbithole.core.annotation.AggregateRoot;
 import java.util.Collection;
 import java.util.Optional;
@@ -22,11 +23,7 @@ public sealed interface RelationshipSchemaType
       }
 
       if (elem instanceof TypeElement typeElem) {
-        var name = typeElem.getSimpleName().toString();
-        if (!anno.rename().equals("")) {
-          name = anno.rename();
-        }
-        return new Ref(name);
+        return new Ref(typeElem.getSimpleName().toString());
       } else {
         throw new RuntimeException(
             String.format(
@@ -52,11 +49,7 @@ public sealed interface RelationshipSchemaType
     }
 
     private Optional<Array> createArray(final DeclaredType type) {
-      var target =
-          processingEnv.getElementUtils().getTypeElement(Collection.class.getTypeName()).asType();
-      if (processingEnv
-              .getTypeUtils()
-              .isAssignable(type, processingEnv.getTypeUtils().erasure(target))
+      if (Utils.isAssignable(processingEnv, type, Collection.class)
           && type.getTypeArguments().size() == 1
           && type.getTypeArguments().get(0) instanceof DeclaredType decl) {
         return Optional.of(new Array(Ref.of(decl)));

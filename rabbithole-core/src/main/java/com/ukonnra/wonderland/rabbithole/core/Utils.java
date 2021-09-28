@@ -2,6 +2,7 @@ package com.ukonnra.wonderland.rabbithole.core;
 
 import com.ukonnra.wonderland.rabbithole.core.annotation.ValueObject;
 import java.util.Optional;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
@@ -37,5 +38,15 @@ public interface Utils {
               "Invalid type. Type[%s] is not a class or interface and cannot be a attribute.",
               elem));
     }
+  }
+
+  static boolean isAssignable(
+      final ProcessingEnvironment processingEnv,
+      final TypeMirror type,
+      final Class<?> targetClass) {
+    var target = processingEnv.getElementUtils().getTypeElement(targetClass.getTypeName()).asType();
+    return processingEnv
+        .getTypeUtils()
+        .isAssignable(type, processingEnv.getTypeUtils().erasure(target));
   }
 }

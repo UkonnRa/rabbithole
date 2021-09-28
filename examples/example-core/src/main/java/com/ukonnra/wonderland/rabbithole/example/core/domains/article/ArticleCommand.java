@@ -1,13 +1,12 @@
 package com.ukonnra.wonderland.rabbithole.example.core.domains.article;
 
 import com.ukonnra.wonderland.rabbithole.core.annotation.Command;
-import com.ukonnra.wonderland.rabbithole.core.facade.CommandFacade;
 import com.ukonnra.wonderland.rabbithole.example.core.domains.article.valobjs.ArticleState;
-import com.ukonnra.wonderland.rabbithole.jsonapi.annotation.JsonapiCommand;
-import com.ukonnra.wonderland.rabbithole.jsonapi.schema.JsonapiOperationType;
+import com.ukonnra.wonderland.rabbithole.plugin.jsonapi.annotation.JsonapiCommand;
+import com.ukonnra.wonderland.rabbithole.plugin.jsonapi.schema.JsonapiOperationType;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public sealed interface ArticleCommand extends CommandFacade
+public sealed interface ArticleCommand
     permits ArticleCommand.Create,
         ArticleCommand.Update,
         ArticleCommand.UpdateAuthor,

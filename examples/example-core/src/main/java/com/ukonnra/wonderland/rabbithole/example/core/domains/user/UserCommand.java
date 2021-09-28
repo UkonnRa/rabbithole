@@ -1,12 +1,11 @@
 package com.ukonnra.wonderland.rabbithole.example.core.domains.user;
 
 import com.ukonnra.wonderland.rabbithole.core.annotation.Command;
-import com.ukonnra.wonderland.rabbithole.core.facade.CommandFacade;
-import com.ukonnra.wonderland.rabbithole.jsonapi.annotation.JsonapiCommand;
-import com.ukonnra.wonderland.rabbithole.jsonapi.schema.JsonapiOperationType;
+import com.ukonnra.wonderland.rabbithole.plugin.jsonapi.annotation.JsonapiCommand;
+import com.ukonnra.wonderland.rabbithole.plugin.jsonapi.schema.JsonapiOperationType;
 import java.util.List;
 
-public sealed interface UserCommand extends CommandFacade
+public sealed interface UserCommand
     permits UserCommand.Create, UserCommand.UpdateInfo, UserCommand.Delete {
   @Command(name = "createUser")
   @JsonapiCommand(type = JsonapiOperationType.CREATE)

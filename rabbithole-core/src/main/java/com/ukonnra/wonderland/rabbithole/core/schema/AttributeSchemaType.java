@@ -69,11 +69,7 @@ public sealed interface AttributeSchemaType
     }
 
     private Optional<Array> createArray(final DeclaredType type) {
-      var target =
-          processingEnv.getElementUtils().getTypeElement(Collection.class.getTypeName()).asType();
-      if (processingEnv
-              .getTypeUtils()
-              .isAssignable(type, processingEnv.getTypeUtils().erasure(target))
+      if (Utils.isAssignable(processingEnv, type, Collection.class)
           && type.getTypeArguments().size() == 1) {
         return this.create(type.getTypeArguments().get(0)).map(Array::new);
       }
@@ -81,14 +77,7 @@ public sealed interface AttributeSchemaType
     }
 
     private Optional<Map> createMap(final DeclaredType type) {
-      var target =
-          processingEnv
-              .getElementUtils()
-              .getTypeElement(java.util.Map.class.getTypeName())
-              .asType();
-      if (processingEnv
-              .getTypeUtils()
-              .isAssignable(type, processingEnv.getTypeUtils().erasure(target))
+      if (Utils.isAssignable(processingEnv, type, java.util.Map.class)
           && type.getTypeArguments().size() == 2) {
         return this.create(type.getTypeArguments().get(1)).map(Map::new);
       }

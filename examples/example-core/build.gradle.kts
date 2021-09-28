@@ -3,8 +3,13 @@ plugins {
   `java-library`
 }
 
+object Versions {
+  const val SPOTBUGS = "4.4.1"
+}
+
 dependencies {
-  api(project(":rabbithole-core"))
-  annotationProcessor(project(":rabbithole-core"))
-  api(project(":rabbithole-jsonapi"))
+  api(project(":rabbithole-processor"))
+  annotationProcessor(project(":rabbithole-processor"))
+
+  api("com.github.spotbugs:spotbugs-annotations:${Versions.SPOTBUGS}")
 }

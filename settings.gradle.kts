@@ -1,9 +1,10 @@
 rootProject.name = "rabbithole"
 
 include(
-    ":rabbithole-core",
-    ":rabbithole-jsonapi",
-    ":rabbithole-graphql",
+  ":rabbithole-core",
+  ":rabbithole-plugin-jsonapi",
+  ":rabbithole-plugin-graphql",
+  ":rabbithole-processor",
 )
 
 includeBuild("includedBuild/gradleConfiguration")
