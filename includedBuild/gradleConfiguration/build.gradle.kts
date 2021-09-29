@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
   implementation("com.github.ben-manes:gradle-versions-plugin:0.39.0")
-  implementation("com.diffplug.spotless:spotless-plugin-gradle:5.15.2")
+  implementation("com.diffplug.spotless:spotless-plugin-gradle:5.16.0")
   implementation("gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.5")
   implementation("org.javamodularity:moduleplugin:1.8.10")
 }
@@ -37,4 +37,15 @@ gradlePlugin {
 
 ktlint {
   version.set("0.42.1")
+}
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.compileKotlin {
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_17.toString()
+  }
 }

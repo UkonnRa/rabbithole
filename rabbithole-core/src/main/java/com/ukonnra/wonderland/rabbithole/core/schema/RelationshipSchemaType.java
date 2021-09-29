@@ -27,7 +27,7 @@ public sealed interface RelationshipSchemaType
       } else {
         throw new RuntimeException(
             String.format(
-                "Invalid type. Type[%s] is not a class or interface and cannot be a relationship.",
+                "Invalid plural. Type[%s] is not a class or interface and cannot be a relationship.",
                 elem));
       }
     }

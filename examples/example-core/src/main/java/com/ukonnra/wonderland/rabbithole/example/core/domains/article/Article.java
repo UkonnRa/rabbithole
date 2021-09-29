@@ -10,7 +10,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-@AggregateRoot(type = "articles", command = ArticleCommand.class)
+@AggregateRoot(plural = "articles", command = ArticleCommand.class)
 public record Article(
     String id,
     int count,

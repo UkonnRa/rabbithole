@@ -12,12 +12,14 @@ import com.ukonnra.wonderland.rabbithole.core.schema.AggregateSchema;
 import com.ukonnra.wonderland.rabbithole.core.schema.ApplicationSchema;
 import com.ukonnra.wonderland.rabbithole.core.schema.AttributeSchemaType;
 import com.ukonnra.wonderland.rabbithole.core.schema.CommandSchema;
+import com.ukonnra.wonderland.rabbithole.core.schema.CommandSchemaMetadata;
 import com.ukonnra.wonderland.rabbithole.core.schema.FieldSchema;
 import com.ukonnra.wonderland.rabbithole.core.schema.RelationshipSchemaType;
 import com.ukonnra.wonderland.rabbithole.core.schema.ValueObjectSchema;
 import com.ukonnra.wonderland.rabbithole.plugin.graphql.GraphqlPlugin;
 import com.ukonnra.wonderland.rabbithole.plugin.jsonapi.JsonapiPlugin;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,14 +56,6 @@ public class AnnotationProcessor extends AbstractProcessor {
   @SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
   private List<Plugin> plugins;
 
-  private void info(final String message) {
-    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
-  }
-
-  private void error(final String message) {
-    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-  }
-
   private static <A extends Annotation> List<? extends TypeMirror> getTypesInAnnotation(
       final A annotation, final Function<A, Class<?>[]> getter) {
     try {
@@ -80,6 +74,14 @@ public class AnnotationProcessor extends AbstractProcessor {
     } catch (MirroredTypeException e) {
       return Optional.ofNullable(e.getTypeMirror());
     }
+  }
+
+  private void info(final String message) {
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
+  }
+
+  private void error(final String message) {
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
   }
 
   @Override
@@ -104,6 +106,7 @@ public class AnnotationProcessor extends AbstractProcessor {
       var annoApp = elemApp.getAnnotation(RabbitHoleApplication.class);
       var context =
           new ApplicationContext(
+              annoApp.module(),
               annoApp.defaultAsNonNull(),
               getTypesInAnnotation(annoApp, RabbitHoleApplication::nullMarkers));
       this.fieldFactory = new FieldSchema.Factory(processingEnv, context);
@@ -168,14 +171,16 @@ public class AnnotationProcessor extends AbstractProcessor {
                                 subElem));
                       }
                       var commandAttrs = this.fieldFactory.createAttributes(subElem);
+                      var commandMetas = new ArrayList<CommandSchemaMetadata>();
+                      for (var p : this.plugins) {
+                        commandMetas.add(p.parseCommandMetadata(subElem));
+                      }
                       var subCommand =
                           new CommandSchema(
                               commandElem.getSimpleName() + subElem.getSimpleName().toString(),
                               annoCommand.name(),
                               commandAttrs,
-                              this.plugins.stream()
-                                  .flatMap(p -> p.parseCommandMetadata(subElem).stream())
-                                  .toList());
+                              commandMetas);
                       commands.add(subCommand);
                     }
                   }
@@ -183,7 +188,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
                 aggregates.add(
                     new AggregateSchema(
-                        annoAggr.type(),
+                        annoAggr.plural(),
                         type.getSimpleName().toString(),
                         attributes,
                         relationships,
@@ -199,13 +204,19 @@ public class AnnotationProcessor extends AbstractProcessor {
           }
         }
       }
-      var applicationSchema = new ApplicationSchema(aggregates, valObjs);
+
+      var metadata =
+          this.plugins.stream()
+              .map(p -> p.parseApplicationMetadata((PackageElement) elemApp))
+              .flatMap(Optional::stream)
+              .toList();
+      var applicationSchema = new ApplicationSchema(aggregates, valObjs, metadata);
       for (var plugin : this.plugins) {
-        plugin.generate(applicationSchema);
+        plugin.generate(context, applicationSchema);
       }
 
       return true;
-    } catch (RuntimeException e) {
+    } catch (RuntimeException | IOException e) {
       e.printStackTrace();
       error(e.getMessage());
       return false;

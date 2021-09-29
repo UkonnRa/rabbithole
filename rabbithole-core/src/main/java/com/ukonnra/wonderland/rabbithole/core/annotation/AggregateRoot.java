@@ -9,11 +9,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AggregateRoot {
-  /** @return AggregateRoot type */
-  String type();
+  /** @return AggregateRoot plural */
+  String plural();
 
   Class<?> command();
 
-  /** @return AggregateRoot id field name, the default is "id" */
+  /** @return AggregateRoot id field type, the default is "id" */
   String idField() default "id";
 }

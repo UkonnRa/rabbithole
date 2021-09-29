@@ -7,7 +7,7 @@ abstract class ServiceConfigurationPluginBase : ConfigurationPluginBase() {
   companion object {
     private const val JUNIT5_VERSION = "5.8.1"
     private const val LOG4J2_VERSION = "2.14.1"
-    private const val JACKSON_VERSION = "2.13.0-rc2"
+    private const val JACKSON_VERSION = "2.13.0"
   }
 
   abstract fun doApply(target: Project)

@@ -17,28 +17,7 @@ public sealed interface AttributeSchemaType
         AttributeSchemaType.Primitive,
         AttributeSchemaType.Ref {
   record Primitive(Type type) implements AttributeSchemaType {
-    public enum Type {
-      BOOLEAN,
-      INTEGER,
-      STRING,
-      FLOAT,
-      TIMESTAMP
-    }
-
-    public static Primitive of(final PrimitiveType type) {
-      var ty =
-          switch (type.toString()) {
-            case "boolean" -> Type.BOOLEAN;
-            case "byte", "short", "int", "long" -> Type.INTEGER;
-            case "char" -> Type.STRING;
-            case "float", "double" -> Type.FLOAT;
-            default -> throw new RuntimeException(type + " is not a primitive type");
-          };
-
-      return new Primitive(ty);
-    }
-
-    private static java.util.Map<String, Type> TYPE_MAPPING =
+    private static final java.util.Map<String, Type> TYPE_MAPPING =
         java.util.Map.ofEntries(
             java.util.Map.entry(Boolean.class.getTypeName(), Type.BOOLEAN),
             java.util.Map.entry(Byte.class.getTypeName(), Type.INTEGER),
@@ -52,8 +31,29 @@ public sealed interface AttributeSchemaType
             java.util.Map.entry(Double.class.getTypeName(), Type.FLOAT),
             java.util.Map.entry(Instant.class.getTypeName(), Type.TIMESTAMP));
 
+    public static Primitive of(final PrimitiveType type) {
+      var ty =
+          switch (type.toString()) {
+            case "boolean" -> Type.BOOLEAN;
+            case "byte", "short", "int", "long" -> Type.INTEGER;
+            case "char" -> Type.STRING;
+            case "float", "double" -> Type.FLOAT;
+            default -> throw new RuntimeException(type + " is not a primitive plural");
+          };
+
+      return new Primitive(ty);
+    }
+
     public static Optional<Primitive> of(final DeclaredType type) {
       return Optional.ofNullable(TYPE_MAPPING.get(type.toString())).map(Primitive::new);
+    }
+
+    public enum Type {
+      BOOLEAN,
+      INTEGER,
+      STRING,
+      FLOAT,
+      TIMESTAMP
     }
   }
 

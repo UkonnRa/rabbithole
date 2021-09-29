@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-@AggregateRoot(type = "users", command = UserCommand.class)
+@AggregateRoot(plural = "users", command = UserCommand.class)
 public record User(
     String id,
     @Nullable String name,

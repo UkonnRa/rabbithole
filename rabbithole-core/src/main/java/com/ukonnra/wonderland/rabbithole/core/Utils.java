@@ -35,7 +35,7 @@ public interface Utils {
     } else {
       throw new RuntimeException(
           String.format(
-              "Invalid type. Type[%s] is not a class or interface and cannot be a attribute.",
+              "Invalid plural. Type[%s] is not a class or interface and cannot be a attribute.",
               elem));
     }
   }

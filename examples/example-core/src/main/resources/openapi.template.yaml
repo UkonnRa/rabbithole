@@ -1,0 +1,7 @@
+openapi: 3.0.3
+info:
+  title: Wonderland RabbitHole Example Application
+  description: Wonderland RabbitHole Example Application
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:8080'

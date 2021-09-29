@@ -14,9 +14,12 @@ public class MainVerticle extends AbstractVerticle {
   public void start() throws IOException {
     LOGGER.info("Start example vertx");
 
-    try (var ins = Objects.requireNonNull(this.getClass().getResourceAsStream("/log4j2.xml"))) {
-      var log4j2 = new String(ins.readAllBytes(), StandardCharsets.UTF_8);
-      LOGGER.info("log4j2 file: {}", log4j2);
+    try (var ins =
+        Objects.requireNonNull(
+            this.getClass()
+                .getResourceAsStream("/resources/rabbithole.example.core.openapi.yaml"))) {
+      var openapi = new String(ins.readAllBytes(), StandardCharsets.UTF_8);
+      LOGGER.info("OpenAPI file: {}", openapi);
     }
   }
 }
