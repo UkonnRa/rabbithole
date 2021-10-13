@@ -249,8 +249,12 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
     }
   }
 
+  private static String capitalize(final String item) {
+    return item.substring(0, 1).toUpperCase() + item.substring(1).toLowerCase();
+  }
+
   private static String capitalize(final Enum<?> item) {
-    return item.name().substring(0, 1).toUpperCase() + item.name().substring(1).toLowerCase();
+    return capitalize(item.name());
   }
 
   @Override
@@ -328,7 +332,7 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
         processingEnv
             .getFiler()
             .createResource(
-                StandardLocation.CLASS_OUTPUT,
+                StandardLocation.SOURCE_OUTPUT,
                 "",
                 String.format("resources/%s.openapi.yaml", context.getModuleName()))
             .openWriter()) {
@@ -354,6 +358,7 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
         new PathItem()
             .get(
                 new Operation()
+                    .operationId(String.format("get%s", capitalize(schema.plural())))
                     .parameters(
                         List.of(
                             PARAMETER_INCLUDE,
@@ -369,6 +374,7 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
                                     .description("OK"))))
             .post(
                 new Operation()
+                    .operationId(String.format("create%s", schema.type()))
                     .requestBody(createRequest(String.format("%sCommandCreate", schema.type())))
                     .responses(
                         new ApiResponses()
@@ -383,6 +389,7 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
         new PathItem()
             .get(
                 new Operation()
+                    .operationId(String.format("get%s", schema.type()))
                     .parameters(List.of(PARAMETER_INCLUDE, PARAMETER_FIELDS, paramId))
                     .responses(
                         new ApiResponses()
@@ -392,6 +399,7 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
                                     .description("OK"))))
             .patch(
                 new Operation()
+                    .operationId(String.format("update%s", schema.type()))
                     .addParametersItem(paramId)
                     .requestBody(createRequest(String.format("%sCommandUpdate", schema.type())))
                     .responses(
@@ -399,6 +407,7 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
                             .addApiResponse("204", new ApiResponse().description("No Content"))))
             .delete(
                 new Operation()
+                    .operationId(String.format("delete%s", schema.type()))
                     .addParametersItem(paramId)
                     .responses(
                         new ApiResponses()

@@ -4,7 +4,7 @@ plugins {
 
   id("com.github.ben-manes.versions") version "0.39.0"
   id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
-  id("io.gitlab.arturbosch.detekt") version "1.18.1"
+  id("io.gitlab.arturbosch.detekt") version "1.19.0"
 }
 
 repositories {
@@ -13,10 +13,10 @@ repositories {
 
 dependencies {
   implementation("com.github.ben-manes:gradle-versions-plugin:0.39.0")
-  implementation("com.diffplug.spotless:spotless-plugin-gradle:5.16.0")
-  implementation("gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.5")
+  implementation("com.diffplug.spotless:spotless-plugin-gradle:6.0.4")
+  implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:5.0.2")
   implementation("org.javamodularity:moduleplugin:1.8.10")
-  implementation("io.freefair.gradle:lombok-plugin:6.2.0")
+  implementation("io.freefair.gradle:lombok-plugin:6.3.0")
 }
 
 gradlePlugin {
@@ -37,7 +37,7 @@ gradlePlugin {
 }
 
 ktlint {
-  version.set("0.42.1")
+  version.set("0.43.2")
 }
 
 java {

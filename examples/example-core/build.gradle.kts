@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-  implementation(project(":rabbithole-core"))
-  implementation(project(":rabbithole-plugin-jsonapi"))
+  api(project(":rabbithole-core"))
+  api(project(":rabbithole-plugin-jsonapi"))
   compileOnly(project(":rabbithole-processor"))
   annotationProcessor(project(":rabbithole-processor"))
 }

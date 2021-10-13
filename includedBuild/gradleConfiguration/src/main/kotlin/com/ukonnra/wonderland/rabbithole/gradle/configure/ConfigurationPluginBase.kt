@@ -75,7 +75,7 @@ abstract class ConfigurationPluginBase : Plugin<Project> {
       javaKt {
         importOrder()
         removeUnusedImports()
-        googleJavaFormat()
+        googleJavaFormat("1.13.0")
         indentWithSpaces(2)
       }
     }

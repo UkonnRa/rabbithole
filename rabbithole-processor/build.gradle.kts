@@ -3,7 +3,7 @@ plugins {
 }
 
 object Versions {
-  const val AUTO_SERVICE = "1.0"
+  const val AUTO_SERVICE = "1.0.1"
 }
 
 dependencies {

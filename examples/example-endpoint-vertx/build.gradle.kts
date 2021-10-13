@@ -4,15 +4,13 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
-private object Versions {
-  const val VERTX = "4.2.0.Beta1"
-}
-
 dependencies {
   implementation(project(":example-core"))
 
-  implementation(platform("io.vertx:vertx-stack-depchain:${Versions.VERTX}"))
+  implementation(platform("io.vertx:vertx-stack-depchain:4.2.1"))
 
+  implementation("io.vertx:vertx-web")
+  implementation("io.vertx:vertx-web-openapi")
   implementation("io.vertx:vertx-config")
   implementation("io.vertx:vertx-config-hocon")
 
