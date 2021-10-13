@@ -16,6 +16,7 @@ dependencies {
   implementation("com.diffplug.spotless:spotless-plugin-gradle:5.16.0")
   implementation("gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.5")
   implementation("org.javamodularity:moduleplugin:1.8.10")
+  implementation("io.freefair.gradle:lombok-plugin:6.2.0")
 }
 
 gradlePlugin {

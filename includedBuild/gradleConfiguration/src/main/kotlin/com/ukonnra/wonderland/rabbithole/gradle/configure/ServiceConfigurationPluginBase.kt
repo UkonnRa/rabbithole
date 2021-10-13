@@ -1,6 +1,10 @@
 package com.ukonnra.wonderland.rabbithole.gradle.configure
 
+import io.freefair.gradle.plugins.lombok.LombokExtension
+import io.freefair.gradle.plugins.lombok.LombokPlugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
 abstract class ServiceConfigurationPluginBase : ConfigurationPluginBase() {
@@ -16,6 +20,12 @@ abstract class ServiceConfigurationPluginBase : ConfigurationPluginBase() {
     super.apply(target)
 
     doApply(target)
+
+    target.apply<LombokPlugin>()
+
+    target.extensions.configure<LombokExtension> {
+      version.set("1.18.22")
+    }
 
     target.dependencies {
       "implementation"(platform("org.junit:junit-bom:$JUNIT5_VERSION"))

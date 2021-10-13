@@ -166,17 +166,7 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
                           "meta", new ObjectSchema()))),
           Map.entry(
               "PaginationMeta",
-              new ObjectSchema().addProperties("rangeTruncated", new IntegerSchema())),
-          Map.entry(
-              "Filter",
-              new ObjectSchema()
-                  .properties(
-                      Map.of(
-                          "target", new StringSchema(),
-                          "field", new StringSchema(),
-                          "operation", new StringSchema(),
-                          "value",
-                              new StringSchema().description("Filter value in JSON format")))));
+              new ObjectSchema().addProperties("rangeTruncated", new IntegerSchema())));
 
   private static RequestBody createRequest(final String type) {
     return new RequestBody()
@@ -550,11 +540,24 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
                 if (l == null) {
                   l = new ArrayList<>();
                 }
+
+                var attributes =
+                    command.attributes().values().stream()
+                        .filter(attr -> !attr.name().equals(meta.idField()))
+                        .toList();
+
+                if (attributes.isEmpty()) {
+                  l.add(
+                      new ObjectSchema()
+                          .required(List.of("type"))
+                          .additionalProperties(false)
+                          .properties(
+                              Map.of("type", new StringSchema().addEnumItem(command.type()))));
+                  return l;
+                }
+
                 var result = new ObjectSchema();
-                for (var attr : command.attributes().values()) {
-                  if (attr.name().equals(meta.idField())) {
-                    continue;
-                  }
+                for (var attr : attributes) {
                   result.addProperties(attr.name(), toSchema(attr.type()));
                   if (!attr.isNullable()) {
                     result.addRequiredItem(attr.name());
@@ -579,26 +582,42 @@ public record JsonapiPlugin(ProcessingEnvironment processingEnv) implements Plug
           commands.entrySet().stream()
               .filter(e -> !e.getValue().isEmpty())
               .map(
-                  e ->
-                      Map.entry(
-                          e.getKey(),
-                          new ObjectSchema()
-                              .addRequiredItem("data")
-                              .additionalProperties(false)
-                              .properties(
-                                  Map.of(
-                                      "jsonapi", new Schema<>().$ref("Jsonapi"),
-                                      "data",
-                                          new ObjectSchema()
-                                              .addRequiredItem("attributes")
-                                              .additionalProperties(false)
-                                              .addProperties(
-                                                  "attributes",
-                                                  new ComposedSchema()
-                                                      .oneOf(e.getValue())
-                                                      .discriminator(
-                                                          new Discriminator()
-                                                              .propertyName("type")))))))
+                  e -> {
+                    Schema<?> attributes;
+
+                    if (e.getValue().size() == 1) {
+                      Object data = e.getValue().get(0).getProperties().get("data");
+                      if (data != null) {
+                        attributes = (Schema<?>) data;
+                      } else {
+                        return Map.entry(
+                            e.getKey(),
+                            new ObjectSchema()
+                                .additionalProperties(false)
+                                .properties(Map.of("jsonapi", new Schema<>().$ref("Jsonapi"))));
+                      }
+                    } else {
+                      attributes =
+                          new ComposedSchema()
+                              .oneOf(e.getValue())
+                              .discriminator(new Discriminator().propertyName("type"));
+                    }
+
+                    return Map.entry(
+                        e.getKey(),
+                        new ObjectSchema()
+                            .addRequiredItem("data")
+                            .additionalProperties(false)
+                            .properties(
+                                Map.of(
+                                    "jsonapi",
+                                    new Schema<>().$ref("Jsonapi"),
+                                    "data",
+                                    new ObjectSchema()
+                                        .addRequiredItem("attributes")
+                                        .additionalProperties(false)
+                                        .addProperties("attributes", attributes))));
+                  })
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
   }

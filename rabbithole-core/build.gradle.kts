@@ -7,6 +7,7 @@ object Versions {
 //  const val FREEMARKER = "2.3.31"
 }
 
+
 dependencies {
   api("com.github.spotbugs:spotbugs-annotations:${Versions.SPOTBUGS}")
 //  api("org.freemarker:freemarker:${Versions.FREEMARKER}")

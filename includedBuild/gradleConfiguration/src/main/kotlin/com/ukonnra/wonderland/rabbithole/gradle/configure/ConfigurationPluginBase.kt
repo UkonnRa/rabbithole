@@ -51,6 +51,7 @@ abstract class ConfigurationPluginBase : Plugin<Project> {
     target.extensions.configure<JavaPluginExtension> {
       sourceCompatibility = JAVA_VERSION
       targetCompatibility = JAVA_VERSION
+      modularity.inferModulePath.set(true)
     }
 
     target.extensions.configure<JacocoPluginExtension> {
